@@ -244,7 +244,7 @@ h3{font-size:clamp(1.18rem,1.05rem + .5vw,1.45rem);line-height:1.15;letter-spaci
 .js-cyl .cyl-ctrl{display:flex}
 .js-cyl .cyl-stage{perspective:1500px;perspective-origin:50% 34%;touch-action:pan-y;cursor:grab;-webkit-user-select:none;user-select:none}
 .js-cyl .cyl-stage:active{cursor:grabbing}
-.js-cyl .cyl{position:absolute;left:50%;top:50%;width:0;height:0;display:block;overflow:visible;padding:0;transform-style:preserve-3d;transform:translateZ(calc(var(--R,400)*-1px)) rotateX(-5deg) rotateY(calc(var(--rot,0)*1deg))}
+.js-cyl .cyl{position:absolute;left:50%;top:46%;width:0;height:0;display:block;overflow:visible;padding:0;transform-style:preserve-3d;transform:translateZ(calc(var(--R,400)*-1px)) rotateX(-5deg) rotateY(calc(var(--rot,0)*1deg))}
 .js-cyl .pcard{position:absolute;width:var(--cw,320px);height:var(--ch,360px);left:calc(var(--cw,320px)/-2);top:calc(var(--ch,360px)/-2);transform:rotateY(calc(var(--k)*var(--step,32)*1deg)) translateZ(calc(var(--R,400)*1px));-webkit-backface-visibility:hidden;backface-visibility:hidden}
 
 /* ---------- compare ---------- */
@@ -374,6 +374,9 @@ h3{font-size:clamp(1.18rem,1.05rem + .5vw,1.45rem);line-height:1.15;letter-spaci
   .stage-final{position:relative;top:auto;aspect-ratio:1.2;max-height:min(52svh,520px)}
 }
 @media (max-width:900px) and (min-width:768px){
+  .proof-head{flex-direction:column;align-items:flex-start}
+  .proof-head .prog{align-items:flex-start}
+  .proof-head .cyl-ctrl{justify-content:flex-start}
   .problem-grid{grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr)}
   .benefits-head{grid-template-columns:1fr}
   .stage-deal{max-height:300px}
@@ -1346,6 +1349,7 @@ h3{font-size:clamp(1.18rem,1.05rem + .5vw,1.45rem);line-height:1.15;letter-spaci
   var S = null;
   function createScene() {
     var T = W.THREE; if (!T) return null;
+    try { var probe = doc.createElement('canvas'); if (!(probe.getContext('webgl') || probe.getContext('experimental-webgl'))) return null; } catch (e) { return null; }
     var canvas = $('#gl'), renderer;
     try { renderer = new T.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true, powerPreference: 'high-performance' }); }
     catch (e) { return null; }
@@ -1909,7 +1913,7 @@ h3{font-size:clamp(1.18rem,1.05rem + .5vw,1.45rem);line-height:1.15;letter-spaci
   }
   function applyStep(i) {
     stepIdx = i;
-    if (!S) { setFallback('steps', ['ring', 'answer', 'print', 'file'][i]); return; }
+    if (!S) { setFallback('steps', ['ring', 'answer', 'print', 'file'][i]); status('steps', ['Incoming call · 7:52 pm', 'Answered on the first ring', 'Booking Tue 9:40 am', 'Booked · confirmation texted'][i], i ? 'live' : 'ring'); return; }
     var a = S.active(); if (!a || a.name !== 'steps') return;
     S.setExplode(false); S.setFan(false); S.setClock('7:52 pm');
     if (i === 0) { S.setHeadset('rest'); S.setCard('stack'); S.setTile(false); S.setRipples(false); S.setRing(true); S.setDisplay('incoming'); status('steps', 'Incoming call · 7:52 pm', 'ring'); }
@@ -1919,7 +1923,7 @@ h3{font-size:clamp(1.18rem,1.05rem + .5vw,1.45rem);line-height:1.15;letter-spaci
   }
   function showMissed(n, ring) {
     missedN = n;
-    if (!S) return;
+    if (!S) { status('problem', n ? n + (n === 1 ? ' missed call' : ' missed calls') : 'Line 1 · Ringing', 'ring'); var fbp = $('.stage-problem .stage-fb'); if (fbp) fbp.innerHTML = FB.render('missed', { disp: n ? n + ' missed' : 'Incoming call' }); return; }
     var a = S.active(); if (!a || a.name !== 'problem') return;
     S.setDisplay(n ? 'missed' : 'incoming', n);
     status('problem', n ? n + (n === 1 ? ' missed call' : ' missed calls') : 'Line 1 · Ringing', 'ring');
@@ -2127,7 +2131,7 @@ h3{font-size:clamp(1.18rem,1.05rem + .5vw,1.45rem);line-height:1.15;letter-spaci
   function layoutCyl() {
     if (!CYL.on) return;
     var sw = CYL.stage.clientWidth, sh = CYL.stage.clientHeight;
-    var cw = Math.round(clamp(sw * 0.26, 240, 320)), chh = Math.round(clamp(sh - 30, 280, sh > 700 ? 420 : 350));
+    var cw = Math.round(clamp(sw * 0.26, 240, 320)), chh = Math.round(clamp(sh - 40, 280, sh > 520 ? 400 : 350));
     var R = Math.round(cw / 2 / Math.tan(CYL.STEP * Math.PI / 360) + 26);
     CYL.el.style.setProperty('--R', R); CYL.el.style.setProperty('--step', CYL.STEP); CYL.el.style.setProperty('--cw', cw + 'px'); CYL.el.style.setProperty('--ch', chh + 'px');
     CYL.lastRot = null;
